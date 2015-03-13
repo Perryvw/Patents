@@ -1,0 +1,8 @@
+D:\Mijn code\C#\Patents\Patents\bin\Debug\Patents.exe
+D:\Mijn code\C#\Patents\Patents\bin\Debug\Patents.pdb
+D:\Mijn code\C#\Patents\Patents\obj\x86\Debug\Patents.Properties.Resources.resources
+D:\Mijn code\C#\Patents\Patents\obj\x86\Debug\Patents.csproj.GenerateResource.Cache
+D:\Mijn code\C#\Patents\Patents\obj\x86\Debug\Patents.exe
+D:\Mijn code\C#\Patents\Patents\obj\x86\Debug\Patents.pdb
+D:\Mijn code\C#\Patents\Patents\obj\x86\Debug\Patents.Form1.resources
+D:\Mijn code\C#\Patents\Patents\obj\x86\Debug\Patents.csprojResolveAssemblyReference.cache
