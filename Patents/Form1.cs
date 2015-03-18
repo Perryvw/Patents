@@ -30,17 +30,30 @@ namespace Patents
 
         private void button1_Click(object sender, EventArgs e)
         {
+            //Re-initialise family collection
+            this.Families = new List<PatentFamily>();
+            
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                String[] lines = File.ReadAllLines(openFileDialog1.FileName);
-                for (int i = 1; i < lines.Length; i++)
+                //for each selected file
+                foreach (String file in openFileDialog1.FileNames)
                 {
-                    Families.Add(new PatentFamily(lines[i]));
+                    //read all lines
+                    String[] lines = File.ReadAllLines(openFileDialog1.FileName);
+                    
+                    //parse all lines as patent families
+                    for (int i = 1; i < lines.Length; i++)
+                    {
+                        Families.Add(new PatentFamily(lines[i]));
+                    }
+
                 }
 
+                //Initialise output buffer
                 List<String> newLines = new List<string>();
-
-                //newLines = getYearStats();
+                
+                //Fill output buffer
+                newLines = getYearStats();
 
                 //newLines = getCitationQuery();
 
@@ -52,14 +65,12 @@ namespace Patents
 
                 //newLines = getCountryStats2();
 
-                newLines = getTopicStats();
+                //newLines = getTopicStats();
 
+                //Write output and open it in notepad
                 File.WriteAllLines("output.txt", newLines.ToArray());
 
                 Process.Start("output.txt");
-
-                //Families.Sort((a,b) => a.Companies.Count.CompareTo(b.Companies.Count));
-                String test = "";
             }
         }
 
@@ -305,7 +316,7 @@ namespace Patents
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (openFileDialog2.ShowDialog() == DialogResult.OK)
+            /*if (openFileDialog2.ShowDialog() == DialogResult.OK)
             {
                 foreach (String filename in openFileDialog2.FileNames)
                 {
@@ -367,7 +378,7 @@ namespace Patents
                 }
 
                 File.WriteAllLines("result-comp.txt", output2.ToArray());
-            }
+            }*/
         }
     }
 }
