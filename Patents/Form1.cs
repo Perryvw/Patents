@@ -39,7 +39,7 @@ namespace Patents
                 foreach (String file in openFileDialog1.FileNames)
                 {
                     //read all lines
-                    String[] lines = File.ReadAllLines(openFileDialog1.FileName);
+                    String[] lines = File.ReadAllLines(file);
                     
                     //parse all lines as patent families
                     for (int i = 1; i < lines.Length; i++)
