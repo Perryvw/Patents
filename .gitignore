@@ -43,3 +43,11 @@ Temporary Items
 .apdisk
 Patents/bin/Debug/Patents.vshost.exe.manifest
 Patents/bin/Debug/output.txt
+Patents/bin/Debug/*
+!Patents/bin/Debug/Input/*
+*.cache
+Patents/obj/x86/Debug/Patents.csproj.FileListAbsolute.txt
+
+Patents/obj/x86/Debug/Patents.exe
+*.pdb
+Patents/obj/x86/Debug/Patents.csproj.FileListAbsolute.txt
