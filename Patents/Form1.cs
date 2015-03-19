@@ -66,7 +66,9 @@ namespace Patents
 
                 //newLines = getCountryStats2();
 
-                newLines = getTopicStats();
+             //   newLines = getTopicStats();
+
+                newLines = getPatentCountries();
 
                 //Write output and open it in notepad
                 File.WriteAllLines("output.txt", newLines.ToArray());
@@ -75,6 +77,29 @@ namespace Patents
             }
         }
 
+        private List<String> getPatentCountries() {
+            Dictionary<String, int> countsByCountries = new Dictionary<String, int>();
+            foreach (PatentFamily pf in Families)
+            {
+                foreach (String country in pf.Countries) {
+                    if (countsByCountries.Keys.Contains(country))
+                    {
+                        countsByCountries[country]++;
+                    }
+                    else {
+                        countsByCountries[country] = 1;
+                    }  
+                }
+            }
+            List<String> lines = new List<String>();
+            foreach (KeyValuePair<String, int> entry in countsByCountries)
+            {
+                lines.Add(entry.Key + "\t" + entry.Value);
+            }
+
+            return lines;
+        }
+ 
         private List<String> getCitationMatrix() {
             Dictionary<String, int> companyIndices = new Dictionary<String, int>(); 
             //Create a dictionary mapping company to an id
