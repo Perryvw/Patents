@@ -57,7 +57,7 @@ namespace Patents
 
                 //newLines = getCitationQuery();
 
-                //newLines = getCompanyStats1();
+               // newLines = getCompanyStats1();
 
                 //newLines = getCompanyStats2();
 
@@ -65,13 +65,29 @@ namespace Patents
 
                 //newLines = getCountryStats2();
 
-                //newLines = getTopicStats();
+                newLines = getTopicStats();
 
                 //Write output and open it in notepad
                 File.WriteAllLines("output.txt", newLines.ToArray());
 
                 Process.Start("output.txt");
             }
+        }
+
+        private List<String> getCitationMatrix() {
+            Dictionary<String, int> companyIndices = new Dictionary<String, int>(); 
+            //Create a dictionary mapping company to an id
+            int currentIndex = 0;
+            foreach(PatentFamily pf in Families){
+                foreach(String company in pf.Companies){
+                    if (!companyIndices.Keys.Contains(company)){
+                        companyIndices[company] = currentIndex++;     
+                    }
+                }
+            }
+            int[, ] citationMatrix = new int[companyIndices.Count, companyIndices.Count];
+
+            return null;
         }
 
         private List<String> getCountryStats1()
@@ -306,11 +322,19 @@ namespace Patents
                 }
             }
 
-            foreach (KeyValuePair<string, int> entry in dict)
+            List<KeyValuePair<string, int>> myList = dict.ToList();
+
+            myList.Sort((firstPair, nextPair) =>
             {
+                return nextPair.Value.CompareTo(firstPair.Value);
+            }
+            );
+
+            foreach (KeyValuePair<string, int> entry in myList)
+            {
+                //lines.Add(entry.Key + "\t" + entry.Value);
                 lines.Add(entry.Key + "\t" + entry.Value);
             }
-
             return lines;
         }
 
