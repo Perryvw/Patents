@@ -41,3 +41,11 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+Patents/bin/Debug/*
+!Patents/bin/Debug/Input/*
+*.cache
+Patents/obj/x86/Debug/Patents.csproj.FileListAbsolute.txt
+
+Patents/obj/x86/Debug/Patents.exe
+*.pdb
+Patents/obj/x86/Debug/Patents.csproj.FileListAbsolute.txt
