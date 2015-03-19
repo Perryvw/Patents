@@ -53,11 +53,11 @@ namespace Patents
                 List<String> newLines = new List<string>();
                 
                 //Fill output buffer
-                newLines = getYearStats();
+                //newLines = getYearStats();
 
                 //newLines = getCitationQuery();
 
-                //newLines = getCompanyStats1();
+                newLines = getCompanyStats1();
 
                 //newLines = getCompanyStats2();
 
