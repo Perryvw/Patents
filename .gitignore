@@ -44,7 +44,7 @@ Temporary Items
 Patents/bin/Debug/Patents.vshost.exe.manifest
 Patents/bin/Debug/output.txt
 Patents/bin/Debug/*
-!Patents/bin/Debug/Input/*
+!Patents/bin/Debug/Input/
 *.cache
 Patents/obj/x86/Debug/Patents.csproj.FileListAbsolute.txt
 
