@@ -57,7 +57,6 @@ namespace Patents
 
                 //newLines = getCitationQuery();
 
-
                 // newLines = getCompanyStats1();
 
                 //newLines = getCompanyStats2();
@@ -66,15 +65,176 @@ namespace Patents
 
                 //newLines = getCountryStats2();
 
-             //   newLines = getTopicStats();
+                //newLines = getTopicStats();
 
-                newLines = getPatentCountries();
+                //newLines = getTimedTopCompanyStats();
+
+                //newLines = getGraphData();
+
+                newLines = getTimedCountryStats();
+
+                //newLines = getCitationMatrix();
 
                 //Write output and open it in notepad
                 File.WriteAllLines("output.txt", newLines.ToArray());
 
                 Process.Start("output.txt");
             }
+        }
+
+        private List<String> getGraphData()
+        {
+            Dictionary<PatentFamily, List<PatentFamily>> dict = new Dictionary<PatentFamily, List<PatentFamily>>();
+
+            //loop over all families
+            foreach (PatentFamily pf in Families)
+            {
+                //loop over all citations
+                foreach (String citation in pf.Citations)
+                {
+                    //check if the citation is one of the other patents in the dataset
+                    foreach (PatentFamily pf2 in Families)
+                    {
+                        if (pf2.Patents.Contains(citation) && pf2 != pf)
+                        {
+                            //add to dataset
+                            if (!dict.ContainsKey(pf))
+                            {
+                                dict[pf] = new List<PatentFamily>();
+                            }
+
+                            dict[pf].Add(pf2);
+                        }
+                    }
+                }
+            }
+
+            //build graph data for gephi (SPLIT UP MANUALLY)
+            List<String> returnLines = new List<string>();
+            //vertex data
+            returnLines.Add("Id;Year;PosX;Company");
+            List<PatentFamily> donePF = new List<PatentFamily>();
+
+            //get data for al vertices in adjacency list
+            foreach (PatentFamily source in dict.Keys)
+            {
+                //check if we don't have this one yet
+                if (!donePF.Contains(source))
+                {
+                    donePF.Add(source);
+
+                    String company = "";
+                    returnLines.Add(source.DWAN + ";" + source.Year + ";" + ((source.Year - 1990) * 30) + ";" + company);
+                }
+                
+                foreach (PatentFamily target in dict[source])
+                {
+                    //check if we don't have this one yet
+                    if (!donePF.Contains(target))
+                    {
+                        donePF.Add(target);
+
+                        String company = "";
+                        returnLines.Add(target.DWAN + ";" + target.Year + ";" + ((target.Year - 1990) * 30) + ";" + company);
+                    }
+                }
+            }
+            
+            //Separator, split files here
+            returnLines.Add("======");
+
+            //edge data
+            returnLines.Add("Source;Target");
+            foreach (PatentFamily source in dict.Keys)
+            {
+                foreach (PatentFamily target in dict[source])
+                {
+                        returnLines.Add(source.DWAN + ";" + target.DWAN);
+                }
+            }
+
+            return returnLines;
+        }
+
+        private List<String> getTimedCountryStats()
+        {
+            Dictionary<String, int[]> values = new Dictionary<string, int[]>();
+
+            foreach (PatentFamily p in Families)
+            {
+                foreach (String country in p.Countries) {
+                    if (!values.ContainsKey(country))
+                    {
+                        values[country] = new int[26];
+                    }
+
+                    values[country][p.Year - 1990]++;
+                }
+            }
+
+            List<String> returnLines = new List<string>();
+            String yearStr = "\t";
+            for (int i = 1990; i < 2016; i++)
+            {
+                yearStr += i + "\t";
+            }
+
+            returnLines.Add(yearStr);
+            for (var i = 0; i < values.Count; i++)
+            {
+                String line = values.Keys.ElementAt(i) + "\t";
+                for (var j = 0; j < 26; j++)
+                {
+                    line += values.ElementAt(i).Value[j] + "\t";
+                }
+                returnLines.Add(line);
+            }
+
+            return returnLines;
+        }
+
+        private List<String> getTimedTopCompanyStats()
+        {
+            List<String> topCompanies = new List<string> { "NPDE-C", "GLDS-C", "MITQ-C", "SUME-C", "SAOL-C", "GENK-C",
+                "TELF-C", "MATU-C", "QCOM-C", "RIMR-C", "TOYT-C", "TOKE-C", "CONW-C", "PIOE-C", "ITLC-C"};
+
+            int[][] values = new int[topCompanies.Count][];
+            for (var i = 0; i < topCompanies.Count; i++)
+            {
+                values[i] = new int[26];
+            }
+
+            foreach (PatentFamily p in Families)
+            {
+                int compIndex = -1;
+                foreach (String c in p.Companies)
+                {
+                    if (topCompanies.Contains(c))
+                    {
+                        compIndex = topCompanies.IndexOf(c);
+                        break;
+                    }
+                }
+
+                if (compIndex >= 0)
+                {
+                    values[compIndex][p.Year - 1990] += p.Patents.Count;
+                }
+            }
+
+            List<String> returnLines = new List<string>();
+            String yearStr = "\t";
+            for (int i=1990; i< 2016; i++) {
+                yearStr += i+"\t";
+            }
+
+            returnLines.Add(yearStr);
+            for (var i = 0; i < topCompanies.Count; i++)
+            {
+                returnLines.Add(topCompanies[i]+"\t"+String.Join("\t",values[i]));
+            }
+            
+            return returnLines;
         }
 
         private List<String> getPatentCountries() {
@@ -101,19 +261,68 @@ namespace Patents
         }
  
         private List<String> getCitationMatrix() {
-            Dictionary<String, int> companyIndices = new Dictionary<String, int>(); 
-            //Create a dictionary mapping company to an id
-            int currentIndex = 0;
-            foreach(PatentFamily pf in Families){
-                foreach(String company in pf.Companies){
-                    if (!companyIndices.Keys.Contains(company)){
-                        companyIndices[company] = currentIndex++;     
+            List<String> topCompanies = new List<string> { "NPDE-C", "GLDS-C", "MITQ-C", "SUME-C", "SAOL-C", "GENK-C",
+                "TELF-C", "MATU-C", "QCOM-C", "RIMR-C", "TOYT-C", "TOKE-C", "CONW-C", "PIOE-C", "ITLC-C"};
+
+            int[][] values = new int[topCompanies.Count][];
+            for (var i=0;i<topCompanies.Count;i++) {
+                values[i] = new int[topCompanies.Count];
+            }
+
+            foreach (PatentFamily pf in Families)
+            {
+                int compIndex = -1;
+                foreach (String c in pf.Companies)
+                {
+                    if (topCompanies.Contains(c))
+                    {
+                        compIndex = topCompanies.IndexOf(c);
+                        break;
+                    }
+                }
+
+                if (compIndex >= 0)
+                {
+                    foreach (String citation in pf.Citations)
+                    {
+                        PatentFamily refPatent = null;
+                        foreach (PatentFamily p in Families)
+                        {
+                            if (p.Patents.Contains(citation))
+                            {
+                                refPatent = p;
+                                break;
+                            }
+                        }
+
+                        if (refPatent != null)
+                        {
+                            int compIndex2 = -1;
+                            foreach (String c in refPatent.Companies)
+                            {
+                                if (topCompanies.Contains(c))
+                                {
+                                    compIndex2 = topCompanies.IndexOf(c);
+                                    break;
+                                }
+                            }
+
+                            if (compIndex2 >= 0)
+                            {
+                                values[compIndex][compIndex2]++;
+                            }
+                        }
                     }
                 }
             }
-            int[, ] citationMatrix = new int[companyIndices.Count, companyIndices.Count];
 
-            return null;
+            List<String> returnLines = new List<string>();
+            returnLines.Add(" \t" + String.Join("\t",topCompanies) + "\tTotal");
+            for (var i = 0; i < topCompanies.Count; i++)
+            {
+                returnLines.Add(topCompanies[i] + "\t" + String.Join("\t", values[i]));
+            }
+            return returnLines;
         }
 
         private List<String> getCountryStats1()
