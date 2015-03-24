@@ -237,6 +237,29 @@ namespace Patents
             return returnLines;
         }
 
+        private List<String> getPatentCountries() {
+            Dictionary<String, int> countsByCountries = new Dictionary<String, int>();
+            foreach (PatentFamily pf in Families)
+            {
+                foreach (String country in pf.Countries) {
+                    if (countsByCountries.Keys.Contains(country))
+                    {
+                        countsByCountries[country]++;
+                    }
+                    else {
+                        countsByCountries[country] = 1;
+                    }  
+                }
+            }
+            List<String> lines = new List<String>();
+            foreach (KeyValuePair<String, int> entry in countsByCountries)
+            {
+                lines.Add(entry.Key + "\t" + entry.Value);
+            }
+
+            return lines;
+        }
+ 
         private List<String> getCitationMatrix() {
             List<String> topCompanies = new List<string> { "NPDE-C", "GLDS-C", "MITQ-C", "SUME-C", "SAOL-C", "GENK-C",
                 "TELF-C", "MATU-C", "QCOM-C", "RIMR-C", "TOYT-C", "TOKE-C", "CONW-C", "PIOE-C", "ITLC-C"};
