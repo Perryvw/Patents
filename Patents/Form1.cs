@@ -69,9 +69,9 @@ namespace Patents
 
                 //newLines = getTimedTopCompanyStats();
 
-                //newLines = getGraphData();
+                newLines = getGraphData();
 
-                newLines = getTimedCountryStats();
+                //newLines = getTimedCountryStats();
 
                 //newLines = getCitationMatrix();
 
@@ -124,7 +124,12 @@ namespace Patents
                     donePF.Add(source);
 
                     String company = "";
-                    returnLines.Add(source.DWAN + ";" + source.Year + ";" + ((source.Year - 1990) * 30) + ";" + company);
+                    if (source.Companies.Count > 0)
+                    {
+                        company = source.Companies[0];
+                    }
+                    String country = source.Countries[0];
+                    returnLines.Add(source.DWAN + ";" + source.Year + ";" + ((source.Year - 1990) * 100) + ";" + company + ";" + country);
                 }
                 
                 foreach (PatentFamily target in dict[source])
@@ -135,7 +140,12 @@ namespace Patents
                         donePF.Add(target);
 
                         String company = "";
-                        returnLines.Add(target.DWAN + ";" + target.Year + ";" + ((target.Year - 1990) * 30) + ";" + company);
+                        if (target.Companies.Count > 0)
+                        {
+                            company = target.Companies[0];
+                        }
+                        String country = target.Countries[0];
+                        returnLines.Add(target.DWAN + ";" + target.Year + ";" + ((target.Year - 1990) * 100) + ";" + company + ";" + country);
                     }
                 }
             }
