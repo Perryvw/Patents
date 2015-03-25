@@ -1,7 +1,7 @@
 # 0SAUC0 Patent analyzer
 This C# program is used for the 0SAUC0 course. It reads in one or more files retrieved from the Derwent II database containing patent information. The _Patents_ folder contains the source code for this application, the compiled version can be found here:
 
-
+https://github.com/Perryvw/Patents/releases/
 ## How to obtain input files
 In the result window on Derwent II, click on the arrow next to the 'Save to ...' box and choose 'Save to other file formats'. In the settings box that appears select a range to save (a maximum of 500 patents per query is allowed). In the _Recorded Content_ setting choose _Full record_. In the _File Format_ setting choose _Tab-delimited (Win)_. The file that is downloaded can be opened by this program.
 
