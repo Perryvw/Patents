@@ -25,7 +25,39 @@ namespace Patents
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            //Add the different functionalities to the combobox
+            comboBox1.Items.Add(new ComboboxItem("Patents per year", getYearStats));
+            comboBox1.Items.Add(new ComboboxItem("Patents per company", getCompanyStats1));
+            comboBox1.Items.Add(new ComboboxItem("Patents per country", getCountryStats1));
+            comboBox1.Items.Add(new ComboboxItem("Patents per IPC code", getTopicStats));
+            comboBox1.Items.Add(new ComboboxItem("Patents per top company per year", getTimedTopCompanyStats));
+            comboBox1.Items.Add(new ComboboxItem("Patents per country per year", getTimedCountryStats));
+            comboBox1.Items.Add(new ComboboxItem("Top company citation matrix", getCitationMatrix));
+            comboBox1.Items.Add(new ComboboxItem("Citation graph data", getGraphData));
 
+            comboBox1.SelectedIndex = 0;
+
+            //newLines = getYearStats();
+
+            //newLines = getCitationQuery();
+
+            // newLines = getCompanyStats1();
+
+            //newLines = getCompanyStats2();
+
+            //newLines = getCountryStats1();
+
+            //newLines = getCountryStats2();
+
+            //newLines = getTopicStats();
+
+            //newLines = getTimedTopCompanyStats();
+
+            //newLines = getGraphData();
+
+            //newLines = getTimedCountryStats();
+
+            //newLines = getCitationMatrix();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -49,36 +81,8 @@ namespace Patents
 
                 }
 
-                //Initialise output buffer
-                List<String> newLines = new List<string>();
-                
-                //Fill output buffer
-                //newLines = getYearStats();
-
-                //newLines = getCitationQuery();
-
-                // newLines = getCompanyStats1();
-
-                //newLines = getCompanyStats2();
-
-                //newLines = getCountryStats1();
-
-                //newLines = getCountryStats2();
-
-                //newLines = getTopicStats();
-
-                //newLines = getTimedTopCompanyStats();
-
-                newLines = getGraphData();
-
-                //newLines = getTimedCountryStats();
-
-                //newLines = getCitationMatrix();
-
-                //Write output and open it in notepad
-                File.WriteAllLines("output.txt", newLines.ToArray());
-
-                Process.Start("output.txt");
+                comboBox1.Enabled = true;
+                button2.Enabled = true;
             }
         }
 
@@ -205,8 +209,7 @@ namespace Patents
 
         private List<String> getTimedTopCompanyStats()
         {
-            List<String> topCompanies = new List<string> { "NPDE-C", "GLDS-C", "MITQ-C", "SUME-C", "SAOL-C", "GENK-C",
-                "TELF-C", "MATU-C", "QCOM-C", "RIMR-C", "TOYT-C", "TOKE-C", "CONW-C", "PIOE-C", "ITLC-C"};
+            List<String> topCompanies = getTopCompanies();
 
             int[][] values = new int[topCompanies.Count][];
             for (var i = 0; i < topCompanies.Count; i++)
@@ -271,8 +274,7 @@ namespace Patents
         }
  
         private List<String> getCitationMatrix() {
-            List<String> topCompanies = new List<string> { "NPDE-C", "GLDS-C", "MITQ-C", "SUME-C", "SAOL-C", "GENK-C",
-                "TELF-C", "MATU-C", "QCOM-C", "RIMR-C", "TOYT-C", "TOKE-C", "CONW-C", "PIOE-C", "ITLC-C"};
+            List<String> topCompanies = getTopCompanies();
 
             int[][] values = new int[topCompanies.Count][];
             for (var i=0;i<topCompanies.Count;i++) {
@@ -583,6 +585,41 @@ namespace Patents
             return lines;
         }
 
+        private List<String> getTopCompanies()
+        {
+            //Get number of patents per company
+            Dictionary<String, int> patentsbycompany = new Dictionary<string, int>();
+
+            foreach (PatentFamily pf in Families)
+            {
+                foreach (String c in pf.Companies)
+                {
+                    if (patentsbycompany.Keys.Contains(c))
+                    {
+                        patentsbycompany[c]++;
+                    }
+                    else
+                    {
+                        patentsbycompany[c] = 1;
+                    }
+                }
+            }
+
+            //Sort dictionary on patent number
+            List<KeyValuePair<String, int>> list = patentsbycompany.ToList();
+            list.Sort((firstPair, nextPair) => { return nextPair.Value - firstPair.Value; });
+            
+            //Make output list of the 15 highest
+            List<String> output = new List<string>();
+
+            for (int i = 0; i < list.Count && output.Count < 15; i++)
+            {
+                output.Add(list[i].Key);
+            }
+
+            return output;
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             /*if (openFileDialog2.ShowDialog() == DialogResult.OK)
@@ -648,6 +685,21 @@ namespace Patents
 
                 File.WriteAllLines("result-comp.txt", output2.ToArray());
             }*/
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            //Initialise output buffer
+            List<String> newLines = new List<string>();
+
+            //Check what function to execute
+            Func<List<String>> func = ((ComboboxItem)comboBox1.SelectedItem).Value;
+            newLines = func();
+
+            //Write output and open it in notepad
+            File.WriteAllLines("output.txt", newLines.ToArray());
+
+            Process.Start("output.txt");
         }
     }
 }
