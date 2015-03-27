@@ -596,11 +596,11 @@ namespace Patents
                 {
                     if (patentsbycompany.Keys.Contains(c))
                     {
-                        patentsbycompany[c]++;
+                        patentsbycompany[c]+= pf.Patents.Count;
                     }
                     else
                     {
-                        patentsbycompany[c] = 1;
+                        patentsbycompany[c] = pf.Patents.Count;
                     }
                 }
             }
